@@ -21,7 +21,7 @@ export const settings = async (values: z.infer<typeof changeUserValueValidation>
         return { error : "usuario no ha inicio sesión"}
     }
 
-    const dbUser = await getUserById()
+    const dbUser = await getUserById(user.id)
 
     if (!dbUser) {
 
@@ -76,6 +76,8 @@ export const settings = async (values: z.infer<typeof changeUserValueValidation>
 
     unstable_update({
         user: {
+            nombre:dbUser.nombre,
+            apellido:dbUser.apellido,
             email: dbUser.email,
             id: dbUser.id,
             profile_picture: dbUser.profile_picture,
@@ -84,5 +86,5 @@ export const settings = async (values: z.infer<typeof changeUserValueValidation>
         }
     })
 
-    return { success: "Configuracion cambiada!" }
+    return { success: "Configuracion cambiada!"}
 }

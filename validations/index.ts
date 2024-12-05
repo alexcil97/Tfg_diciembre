@@ -63,19 +63,19 @@ export const changeUserValueValidation = z
     //validacion del nombre contra inyeccion de codigo e insercion de emojis(registro).
     nombre: z
       .string({
-        message: "no puede contener emoticonos es un nombre personal.",
+        message: "no es un nombre valido.",
       })
       .optional(),
 
     //validacion del apellido contra inyeccion de codigo e insercion de emojis(registro).
     apellido: z
       .string({
-        message: "no puede contener emoticonos es un apellido personal.",
+        message: "no es un apellido valido.",
       })
       .optional(),
 
     //validacion de la edad contra inyeccion de codigo e insercion de fechas falsas(registro).
-    edad: z.string(),
+    edad: z.string().optional(),
     // edad: z.date()
     //     .min(new Date("1900-01-01"), { message: "demasiado grande, elige una edad valida" })
     //     .max(new Date(), { message: "demasiado joven" }).optional(),

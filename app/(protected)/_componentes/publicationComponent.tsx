@@ -19,8 +19,10 @@ import {
 import { Input } from "@nextui-org/input";
 import { Button } from "@/components/ui/button";
 import { CldUploadWidget } from 'next-cloudinary'
+import { Publication } from "@/app/types/models";
+import toast, { Toaster } from 'react-hot-toast';
 
-export function PublicationComponent() {
+export function PublicationComponent({ onNewPublication }: { onNewPublication: (newPublication: Publication) => void }) {
   const user = userCurrentUser();
   const [isPending, startTransition] = useTransition();
   const [resource, setResource] = useState("")
@@ -48,6 +50,8 @@ export function PublicationComponent() {
         }
         if (data.success) {
           form.reset();
+          toast.success('Publicado Correctamente!')
+          setResource("")
         }
       });
     });
@@ -55,6 +59,10 @@ export function PublicationComponent() {
 
   return (
     <>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+      />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <FormField
@@ -125,7 +133,6 @@ export function PublicationComponent() {
                 <FormControl>
                   <Input
                     {...field}
-                    disabled={isPending}
                     placeholder="deja tu mensaje"
                     type="text"
                   />
@@ -134,7 +141,7 @@ export function PublicationComponent() {
               </FormItem>
             )}
           />
-          <Button className="mt-5" disabled={isPending} type="submit">
+          <Button className="mt-5" type="submit">
             Publicar!
           </Button>
         </form>

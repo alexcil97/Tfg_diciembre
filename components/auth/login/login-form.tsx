@@ -16,11 +16,11 @@ export const LoginForm = () => {
 
     //messages
 
-    const[error, setError] = useState<string | undefined>("")
-    const[sucess, setSucess] = useState<string | undefined>("")
+    const [error, setError] = useState<string | undefined>("")
+    const [sucess, setSucess] = useState<string | undefined>("")
     const searchParams = useSearchParams()
     const callbackUrl = searchParams.get("callbackUrl")
-    
+
     //usa usetransition que es un hook de next, para mejorar la experiencia de usuario y mantener la fluidez
     const [isPending, startTransition] = useTransition()
 
@@ -40,14 +40,14 @@ export const LoginForm = () => {
 
         startTransition(() => {
             console.log("VERIFICANDO DATOS", values);
-            
+
             login(values, callbackUrl)
-                .then((data)=> {
-                    if(data?.error) {
+                .then((data) => {
+                    if (data?.error) {
                         form.reset()
                         setError(data?.error)
                     }
-                    if(data?.sucess) {
+                    if (data?.sucess) {
                         console.log("HECHO")
                         form.reset()
                         setSucess(data?.sucess)
@@ -64,7 +64,6 @@ export const LoginForm = () => {
             headerLabel="Iniciar Sesion"
             backButtonLabel="¿Aún no tienes una cuenta?"
             backButtonHref="/auth/register"
-            showSocial//botones de continuar con github/gmail
         >
             <Form {...form}>
                 <form
@@ -118,7 +117,7 @@ export const LoginForm = () => {
                         />
                     </div>
                     <Button
-                        type="submit" 
+                        type="submit"
                         className="w-full"
                     >
                         Iniciar Sesión

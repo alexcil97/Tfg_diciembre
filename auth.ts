@@ -61,8 +61,9 @@ export const { handlers: { GET, POST }, auth, signIn, signOut, unstable_update,
 
             if (session.user) {
                 session.user.nombre = token.nombre as string
+                session.user.apellido = token.apellido as string
                 session.user.email = token.email as string
-
+                session.user.edad = token.edad as string
             }
             return session
 
@@ -80,7 +81,9 @@ export const { handlers: { GET, POST }, auth, signIn, signOut, unstable_update,
 
             token.isOAuth = !!existingAccount
             token.nombre = existingUser.nombre
+            token.apellido = existingUser.apellido
             token.email = existingUser.email
+            token.edad = existingUser.edad
             token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled
 
             return token
