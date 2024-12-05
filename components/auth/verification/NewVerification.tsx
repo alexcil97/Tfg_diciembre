@@ -39,7 +39,7 @@ export const NewVerifaction = () => {
 
   return (
     <CardWrapper
-      headerLabel="Verificando"
+      headerLabel="Verificado, dale a volver al login para iniciar sesión"
       backButtonLabel="vuelve al login"
       backButtonHref="/auth/login"
     >
