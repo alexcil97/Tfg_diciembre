@@ -18,12 +18,16 @@ import {
 import { Input } from "@/components/ui/input"
 import { CldUploadWidget } from "next-cloudinary"
 import { HiMiniPhoto } from "react-icons/hi2"
+import { deleteUser } from "@/actions/deleteUser"
+import { useRouter } from "next/navigation"
+
 export const SettingsPanel = () => {
-  
+
     const [resource, setResource] = useState("")
     const user = userCurrentUser()
     const [isPending, startTransition] = useTransition()
-    const { update } = useSession()
+    const { data: session, status, update } = useSession()
+    const router = useRouter()
 
     const form = useForm<z.infer<typeof changeUserValueValidation>>({
         resolver: zodResolver(changeUserValueValidation),
@@ -39,33 +43,51 @@ export const SettingsPanel = () => {
     })
     useEffect(() => {
         form.setValue("profile_picture", resource)
-    },[resource, form])
+    }, [resource, form])
 
-    const onSubmit = (values: z.infer<typeof changeUserValueValidation>) => {
-        const updateUrl_profile_picture = {
-            ...values,
-            profile_picture: resource,
-          }
-      
-        startTransition(() => {
-            settings(values).then((data) => {
-                console.log("Validando: " + values.nombre)
-                console.log("Obteniendo: " + data?.success)
-                if (data?.success) {
-                    update()
-                }
-                if (data?.error) {
-                    console.log("este es el error" + data.error)
-                }
+    const onSubmit = (values: z.infer<typeof changeUserValueValidation>, event?: React.BaseSyntheticEvent<object, any, any>) => {
+        const buttonType = (event?.nativeEvent as SubmitEvent).submitter?.getAttribute('name')
+
+        if (buttonType === 'save') {
+            console.log('boton salvar')
+            const updateUrl_profile_picture = {
+                ...values,
+                profile_picture: resource,
+            }
+            startTransition(() => {
+                settings(values).then((data) => {
+                    console.log("Validando: " + values.nombre)
+                    console.log("Obteniendo: " + data?.success)
+                    if (data?.success) {
+                        update()
+                    }
+                    if (data?.error) {
+                        console.log("este es el error" + data.error)
+                    }
+                })
             })
-        })
-        update()
+            update()
+        } else if (buttonType === 'delete') {
+            console.log("Eliminando Usuario")
+            if (session?.user.id) {
+                deleteUser(session?.user.id)
+                    .then(() => {
+                        console.log("Usuario eliminado: ")
+                        router.push("/")
+                    })
+                    .catch((err) => {
+                        console.error("Error al eliminar", err);
+                        
+                    })
+            }
+        }
     }
+
     return (
         <>
             <div className="my-3">
                 <Form {...form}>
-                    <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+                    <form className="space-y-6" onSubmit={form.handleSubmit((values, event) => onSubmit(values, event))}>
                         <h2 className="mb-3 font-semibold text-4xl">Cuenta de usuario</h2>
                         <div className="grid grid-cols-1 gap-4">
                             <FormField
@@ -186,7 +208,7 @@ export const SettingsPanel = () => {
                                                 //@ts-ignore
                                                 setResource(result?.info.secure_url)
                                                 widget.close()
-                                            
+
                                             }}>
                                             {({ open }) => (
                                                 <FormItem>
@@ -222,17 +244,25 @@ export const SettingsPanel = () => {
                                 )}
                             />
                         </div>
-                        <div className="flex justify-end">
+                        <div className="flex justify-between ">
                             <button
                                 type="submit"
+                                name="save"
                                 className={`px-4 py-2 text-white bg-gray-600 rounded ${isPending ? "opacity-50 cursor-not-allowed" : ""
                                     }`}
                                 disabled={isPending}
                             >
                                 {isPending ? "Guardando..." : "Guardar cambios"}
                             </button>
+                            <button
+                                name="delete"
+                                className={`px-4 py-2 text-white bg-gray-600 rounded ${isPending ? "opacity-50 cursor-not-allowed" : ""
+                                    }`}
+                                disabled={isPending}
+                            >
+                                {isPending ? "Eliminando..." : "Eliminar usuario"}
+                            </button>
                         </div>
-
                     </form>
                 </Form>
             </div>
